@@ -24,15 +24,26 @@ def cifrar(mensagem, chave):
     Returns:
         str: A mensagem cifrada.
     """
+    # Remove caracteres inválidos da mensagem a ser cifrada
     mensagem = filtrar_caracteres_invalidos(mensagem)
+
+    # Divide a mensagem em blocos com o mesmo tamanho da chave
     mensagem_em_blocos = [mensagem[i: i + len(chave)] for i in range(0, len(mensagem), len(chave))]
 
+    # Inicializa uma string vazia para armazenar a mensagem cifrada
     mensagem_cifrada = ''
+
+    # Itera sobre cada bloco da mensagem
     for bloco in mensagem_em_blocos:
+        # Itera sobre cada letra do bloco e a letra correspondente da chave
         for letra, chave_letra in zip(bloco, chave):
+            # Calcula o índice da letra cifrada usando a fórmula da cifra de Vigenère
             indice = (alfabeto.index(letra.lower()) + alfabeto.index(chave_letra.lower())) % len(alfabeto)
+
+            # Adiciona a letra cifrada à mensagem cifrada, mantendo a caixa (maiúscula/minúscula)
             mensagem_cifrada += alfabeto[indice].upper() if letra.isupper() else alfabeto[indice]
 
+    # Retorna a mensagem cifrada
     return mensagem_cifrada
 
 
@@ -47,15 +58,26 @@ def decifrar(mensagem, chave):
     Returns:
         str: A mensagem decifrada.
     """
+    # Remove caracteres inválidos da mensagem cifrada
     mensagem = filtrar_caracteres_invalidos(mensagem)
+
+    # Divide a mensagem em blocos com o mesmo tamanho da chave
     mensagem_em_blocos = [mensagem[i: i + len(chave)] for i in range(0, len(mensagem), len(chave))]
 
+    # Inicializa uma string vazia para armazenar a mensagem decifrada
     mensagem_decifrada = ''
+
+    # Itera sobre cada bloco da mensagem
     for bloco in mensagem_em_blocos:
+        # Itera sobre cada letra do bloco e a letra correspondente da chave
         for letra, chave_letra in zip(bloco, chave):
+            # Calcula o índice da letra decifrada usando a fórmula da cifra de Vigenère
             indice = (alfabeto.index(letra.lower()) - alfabeto.index(chave_letra.lower())) % len(alfabeto)
+
+            # Adiciona a letra decifrada à mensagem decifrada, mantendo a caixa (maiúscula/minúscula)
             mensagem_decifrada += alfabeto[indice].upper() if letra.isupper() else alfabeto[indice]
 
+    # Retorna a mensagem decifrada
     return mensagem_decifrada
 
 
