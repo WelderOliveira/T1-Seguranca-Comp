@@ -25,26 +25,28 @@ def cifrar(mensagem, chave):
         str: A mensagem cifrada.
     """
     # Remove caracteres inválidos da mensagem a ser cifrada
-    mensagem = filtrar_caracteres_invalidos(mensagem)
+    texto = filtrar_caracteres_invalidos(mensagem)
 
-    # Divide a mensagem em blocos com o mesmo tamanho da chave
-    mensagem_em_blocos = [mensagem[i: i + len(chave)] for i in range(0, len(mensagem), len(chave))]
+    texto_cifrado = ''
+    i = 0
 
-    # Inicializa uma string vazia para armazenar a mensagem cifrada
-    mensagem_cifrada = ''
+    for i in range(len(texto)):
+        if texto[i] in alfabeto:
+            # Encontre o índice da letra atual na mensagem e da letra correspondente na chave
+            indice_letra = alfabeto.find(texto[i])
+            indice_chave = alfabeto.find(chave[i % len(chave)])
 
-    # Itera sobre cada bloco da mensagem
-    for bloco in mensagem_em_blocos:
-        # Itera sobre cada letra do bloco e a letra correspondente da chave
-        for letra, chave_letra in zip(bloco, chave):
-            # Calcula o índice da letra cifrada usando a fórmula da cifra de Vigenère
-            indice = (alfabeto.index(letra.lower()) + alfabeto.index(chave_letra.lower())) % len(alfabeto)
+            # Calcule o novo índice usando a cifra de Vigenère
+            novo_indice = (indice_letra + indice_chave) % len(alfabeto)
 
-            # Adiciona a letra cifrada à mensagem cifrada, mantendo a caixa (maiúscula/minúscula)
-            mensagem_cifrada += alfabeto[indice].upper() if letra.isupper() else alfabeto[indice]
+            # Adicione a letra cifrada ao texto cifrado
+            texto_cifrado += alfabeto[novo_indice]
+            i += 1
+        else:
+            # Se não for uma letra do alfabeto, mantenha o caractere original
+            texto_cifrado += texto[i]
 
-    # Retorna a mensagem cifrada
-    return mensagem_cifrada
+    return texto_cifrado
 
 
 def decifrar(mensagem, chave):
@@ -61,24 +63,31 @@ def decifrar(mensagem, chave):
     # Remove caracteres inválidos da mensagem cifrada
     mensagem = filtrar_caracteres_invalidos(mensagem)
 
-    # Divide a mensagem em blocos com o mesmo tamanho da chave
-    mensagem_em_blocos = [mensagem[i: i + len(chave)] for i in range(0, len(mensagem), len(chave))]
+    texto_decifrado = ''
+    i = 0
 
-    # Inicializa uma string vazia para armazenar a mensagem decifrada
-    mensagem_decifrada = ''
+    for letra in mensagem:
+        # Verifique se a letra cifrada está no alfabeto
+        if letra in alfabeto:
+            # Encontre o índice da letra cifrada atual na mensagem e da letra correspondente na chave
+            indice_letra_cifrada = alfabeto.find(letra)
+            indice_chave = alfabeto.find(chave[i % len(chave)])
 
-    # Itera sobre cada bloco da mensagem
-    for bloco in mensagem_em_blocos:
-        # Itera sobre cada letra do bloco e a letra correspondente da chave
-        for letra, chave_letra in zip(bloco, chave):
-            # Calcula o índice da letra decifrada usando a fórmula da cifra de Vigenère
-            indice = (alfabeto.index(letra.lower()) - alfabeto.index(chave_letra.lower())) % len(alfabeto)
+            # Calcule o novo índice usando a cifra de Vigenère
+            novo_indice = (indice_letra_cifrada - indice_chave) % len(alfabeto)
 
-            # Adiciona a letra decifrada à mensagem decifrada, mantendo a caixa (maiúscula/minúscula)
-            mensagem_decifrada += alfabeto[indice].upper() if letra.isupper() else alfabeto[indice]
+            # Se o resultado for negativo, adicione o tamanho do alfabeto para obter um índice positivo
+            if novo_indice < 0:
+                novo_indice += len(alfabeto)
 
-    # Retorna a mensagem decifrada
-    return mensagem_decifrada
+            # Adicione a letra decifrada ao texto decifrado
+            texto_decifrado += alfabeto[novo_indice]
+        else:
+            # Se a letra cifrada não estiver no alfabeto, mantenha-a no texto decifrado
+            texto_decifrado += letra
+        i += 1
+
+    return texto_decifrado
 
 
 def analisar_frequencia(sequencia):
