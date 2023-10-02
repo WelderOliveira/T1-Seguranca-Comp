@@ -1,58 +1,38 @@
 # Defina o alfabeto usado na cifra, incluindo espaço em branco
-alfabeto = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ '
+alfabeto = 'abcdefghijklmnopqrstuvwxyz'
 
 
 # Função para cifrar uma mensagem
-def cifrar(texto, chave):
-    texto_cifrado = ''
-    i = 0
+def cifrar(mensagem, chave):
+    mensagem = filtrar_caracteres_invalidos(mensagem)
+    mensagem_em_lista = [mensagem[i: i + len(chave)] for i in range(0, len(mensagem), len(chave))]
 
-    for i in range(len(texto)):
-        if texto[i] in alfabeto:
-            # Encontre o índice da letra atual na mensagem e da letra correspondente na chave
-            indice_letra = alfabeto.find(texto[i])
-            indice_chave = alfabeto.find(chave[i % len(chave)])
+    encriptado = ''
+    for msg in mensagem_em_lista:
+        for letra, chave_letra in zip(msg, chave):
+            indice = (alfabeto.index(letra.lower()) + alfabeto.index(chave_letra.lower())) % len(alfabeto)
+            encriptado += alfabeto[indice].upper() if letra.isupper() else alfabeto[indice]
 
-            # Calcule o novo índice usando a cifra de Vigenère
-            novo_indice = (indice_letra + indice_chave) % len(alfabeto)
-
-            # Adicione a letra cifrada ao texto cifrado
-            texto_cifrado += alfabeto[novo_indice]
-            i += 1
-        else:
-            # Se não for uma letra do alfabeto, mantenha o caractere original
-            texto_cifrado += texto[i]
-
-    return texto_cifrado
+    return encriptado
 
 
 # Função para decifrar uma mensagem cifrada
-def decifrar(frase_cifrada, chave):
-    texto_decifrado = ''
-    i = 0
+def decifrar(mensagem, chave):
+    mensagem = filtrar_caracteres_invalidos(mensagem)
+    mensagem_em_lista = [mensagem[i: i + len(chave)] for i in range(0, len(mensagem), len(chave))]
 
-    for letra in frase_cifrada:
-        # Verifique se a letra cifrada está no alfabeto
-        if letra in alfabeto:
-            # Encontre o índice da letra cifrada atual na mensagem e da letra correspondente na chave
-            indice_letra_cifrada = alfabeto.find(letra)
-            indice_chave = alfabeto.find(chave[i % len(chave)])
+    decriptado = ''
+    for msg in mensagem_em_lista:
+        for letra, chave_letra in zip(msg, chave):
+            indice = (alfabeto.index(letra.lower()) - alfabeto.index(chave_letra.lower())) % len(alfabeto)
+            decriptado += alfabeto[indice].upper() if letra.isupper() else alfabeto[indice]
 
-            # Calcule o novo índice usando a cifra de Vigenère
-            novo_indice = (indice_letra_cifrada - indice_chave) % len(alfabeto)
+    return decriptado
 
-            # Se o resultado for negativo, adicione o tamanho do alfabeto para obter um índice positivo
-            if novo_indice < 0:
-                novo_indice += len(alfabeto)
 
-            # Adicione a letra decifrada ao texto decifrado
-            texto_decifrado += alfabeto[novo_indice]
-        else:
-            # Se a letra cifrada não estiver no alfabeto, mantenha-a no texto decifrado
-            texto_decifrado += letra
-        i += 1
-
-    return texto_decifrado
+# Função para filtrar caracteres inválidos e manter apenas os caracteres do alfabeto
+def filtrar_caracteres_invalidos(mensagem):
+    return ''.join(c for c in mensagem if c in alfabeto)
 
 
 # Função principal para entrada e saída de dados
@@ -65,26 +45,20 @@ def main():
 
         if select == 1:
             # Solicita ao usuário a entrada do texto a ser cifrado e a chave
-            msg = str(input('Digite o texto a ser cifrado: ')).upper()
-            msg = msg.replace(',', "").replace('.', "").replace('-', "").replace('"', "").replace(':', "").replace(';',
-                                                                                                                   "").replace(
-                "'", "")
-            chave = str(input('Digite a chave: ')).upper()
+            msg = input('Digite o texto a ser cifrado: ').lower()
+            chave = input('Digite a chave: ').lower()
 
             # Cifra e imprime o texto
             texto_cifrado = cifrar(msg, chave)
-            print('Texto cifrado:', texto_cifrado)
+            print('Texto cifrado:', texto_cifrado.upper())
         elif select == 2:
             # Solicita ao usuário a entrada do texto a ser decifrado e a chave
-            msg = str(input('Digite o texto a ser decifrado: ')).upper()
-            msg = msg.replace(',', "").replace('.', "").replace('-', "").replace('"', "").replace(':', "").replace(';',
-                                                                                                                   "").replace(
-                "'", "")
-            chave = str(input('Digite a chave: ')).upper()
+            msg = input('Digite o texto a ser decifrado: ').lower()
+            chave = input('Digite a chave: ').lower()
 
             # Decifra e imprime o texto
             texto_decifrado = decifrar(msg, chave)
-            print('Texto decifrado:', texto_decifrado)
+            print('Texto decifrado:', texto_decifrado.upper())
         elif select == 3:
             pass
         else:
