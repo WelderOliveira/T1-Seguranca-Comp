@@ -261,6 +261,7 @@ def main():
             chave = atacar(mensagem)
             if chave:
                 resultado = decifrar(mensagem, chave)
+                print('Chave -> ', chave)
                 print(resultado)
         else:
             exit()
